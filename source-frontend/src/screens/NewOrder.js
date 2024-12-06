@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, CardHeader, Container, Form, Table } from "react-bootstrap"
+import { Button, Card, CardBody, CardFooter, CardHeader, Container, Form, Table } from "react-bootstrap"
 import PHeader from "../components/PHeader"
 import { useEffect, useState } from "react";
 
@@ -8,6 +8,20 @@ import ip from "../ApiConfig";
 const NewOrder = () => {
 
     const [ order, setOrder ] = useState([])
+    const [ amenities, setAmenities] = useState([])
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [responseMessage, setResponseMessage] = useState('');
+
+    useEffect(
+        () => {
+            axios.get("http://"+ ip +":8089/api/amenities/all").then(response => {
+                setAmenities(response.data.children)
+            }).catch(error => {
+                console.log(error);
+            });
+        }, []
+    )
+
 
     useEffect(
         () => {
@@ -25,13 +39,62 @@ const NewOrder = () => {
         email: '',
         phone: '',
         card: '',
-        amenities_name: '',
-        employee_total_name: ''
+        amenities_name: [
+
+        ]
     });
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
+    };
+
+    const handleCheckboxChange = (e) => {
+        const { value, checked } = e.target;
+        setFormData((prev) => {
+            const newOrderItems = [...prev.amenities_name];
+            if (checked) {
+                newOrderItems.push(value);
+            } else {
+                
+                return {
+                    ...prev,
+                    orderItems: newOrderItems.filter((item) => item !== value),
+                };
+            }
+            return { ...prev, amenities_name: newOrderItems };
+        });
+    };
+    
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setResponseMessage('');
+
+        const payload = {
+            client: {
+                name: formData.name,
+                secondName: formData.secondName,
+                email: formData.email,
+                phone: formData.phone,
+                card: formData.card,
+            },
+            amenities_names: formData.amenities_name
+        };
+
+        try {
+            const response = await axios.post("http://"+ ip +":8089/api/order", payload);
+            setResponseMessage(`Успех! Ответ: ${response.data.message}`);
+
+            // window.location.reload();
+        } catch (error) {
+            if (error.response) {
+                setResponseMessage(`Ошибка: ${error.response.data.message}`);
+            } else {
+                setResponseMessage(`Ошибка: ${error.message}`);
+            }
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -40,7 +103,7 @@ const NewOrder = () => {
             <Container style={{marginTop: '80px'}}>
                 <Card style={{padding:'25px'}}>
                     <h1 style={{textAlign: 'center'}}>Оформление заказа</h1>
-                    <Form>
+                    <Form onSubmit={handleSubmit}>
                         <Form.Group>
                             <Form.Label>Имя</Form.Label>
                             <Form.Control type="text" placeholder="Введите имя" name="name" onChange={handleInputChange}/>
@@ -61,8 +124,26 @@ const NewOrder = () => {
                             <Form.Label>Номер карты</Form.Label>
                             <Form.Control type="text" placeholder="Введите номер банковской карты" name="card" onChange={handleInputChange}/>
                         </Form.Group>
+                        <Form.Group>
+                            <Form.Label className="d-flex flex-wrap justify-content-center" style={{marginTop: '15px'}}>Выбор услуг</Form.Label>
+                            <Container style={{gap:"30px", marginTop: "25px"}} className="d-flex flex-wrap justify-content-center" >
+                                {amenities.map((amenitie) => (
+                                    <Card>
+                                        <CardHeader>
+                                            <Form.Check type="checkbox" label={amenitie.name} value={amenitie.name} onChange={handleCheckboxChange}/>
+                                        </CardHeader>   
+                                        <CardBody>
+                                            <p>{amenitie.description}</p>
+                                        </CardBody>
+                                        <CardFooter>
+                                            <p>Цена: {amenitie.price} р.</p>
+                                        </CardFooter>
+                                    </Card>
+                                ))}
+                            </Container>
+                        </Form.Group>
                         <Form.Group  style={{textAlign: 'center', marginTop: '25px'}}>
-                            <Button>Оформить заказ</Button>
+                            <Button type="submit">Оформить заказ</Button>
                         </Form.Group>
                     </Form>
                 </Card>

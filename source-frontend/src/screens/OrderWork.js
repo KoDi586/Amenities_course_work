@@ -16,7 +16,7 @@ const OrderWork = () => {
                     <CardBody>
                         <CardText>Функция оформления заказа включает выбор услуги и ввод персональных данных.</CardText>
                     </CardBody>
-                    <Button as={Link} to='/orderwork/neworder'>Оформить заказы</Button>
+                    <Button as={Link} to='/orderwork/new'>Оформить заказы</Button>
                 </Card>
                 <Card style={{marginTop: '10px'}}>
                     <CardHeader>
@@ -25,7 +25,7 @@ const OrderWork = () => {
                     <CardBody>
                         <CardText>Функция оплаты заказа выводит все не оплаченные заказы.</CardText>
                     </CardBody>
-                    <Button>Оплатить заказы</Button>
+                    <Button as={Link} to='/orderwork/pay'>Оплатить заказы</Button>
                 </Card>
                 <Card style={{marginTop: '10px'}}>
                     <CardHeader>
@@ -34,7 +34,7 @@ const OrderWork = () => {
                     <CardBody>
                         <CardText>Функция выполнение заказов выводит все оплаченные заказы.</CardText>
                     </CardBody>
-                    <Button>Выполнить заказы</Button>
+                    <Button as={Link} to='/orderwork/finish'>Выполнить заказы</Button>
                 </Card>
             </Container>
         </>

@@ -33,6 +33,14 @@ const ExecutionOfWorks = () => {
                         <CardText>Выводит таблицу по движению денежных средств.</CardText>
                     </CardBody>
                     <Button>Просмотреть</Button>
+                </Card><Card style={{marginTop: '10px'}}>
+                    <CardHeader>
+                        <CardTitle>Учет выполнения заказов</CardTitle>
+                    </CardHeader>
+                    <CardBody>
+                        <CardText>Учёт выполнения заказов в разрезе мастеров и списание израсходованных материалов.</CardText>
+                    </CardBody>
+                    <Button>Просмотреть</Button>
                 </Card>
             </Container>
         </>
