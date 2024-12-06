@@ -13,6 +13,14 @@ import OrderPay from './screens/OrderPay';
 import OrderFinish from './screens/OrderFinish';
 import Amenities from './screens/Amenities';
 import Providers from './screens/Providers';
+import OrderAllFinish from './screens/OrderAllFinish';
+import OrderNoFinish from './screens/OrderNoFinish';
+import Warehouse1 from './screens/Warehouse1';
+import Warehouse2 from './screens/Warehouse2';
+import Warehouse3 from './screens/Warehouse3';
+import AllMaterials from './screens/AllMaterials';
+import Raiting from './screens/Raiting';
+import Salary from './screens/Salary';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -27,13 +35,18 @@ root.render(
           <Route path='/orderwork/finish' element={<OrderFinish/>}/>
 
         <Route path='/executionofworks' element={<ExecutionOfWorks/>}/>
-
+          <Route path='/executionofworks/orderallfinish' element={<OrderAllFinish/>}/>
+          <Route path='/executionofworks/ordernofinish' element={<OrderNoFinish/>}/>
         <Route path='/amenities' element={<Amenities/>}/>
-
+          
         <Route path='/warehouse' element={<Warehouses/>}/>
-
-        <Route path='/salaryandrating' element={<SalaryAndRating/>}/>
-
+          <Route path='/warehouse/warehouse1' element={<Warehouse1/>}/>
+          <Route path='/warehouse/warehouse2' element={<Warehouse2/>}/>
+          <Route path='/warehouse/warehouse3' element={<Warehouse3/>}/>
+          <Route path='/warehouse/allmaterials' element={<AllMaterials/>}/>
+        <Route path='/salaryandraiting' element={<SalaryAndRating/>}/>
+          <Route path='/salaryandraiting/raiting' element={<Raiting/>}/>
+          <Route path='/salaryandraiting/salary' element={<Salary/>}/>
         <Route path='/providers' element={<Providers/>}/>
 
       </Routes>

@@ -1,6 +1,8 @@
 import { Button, Card, CardBody, CardHeader, CardText, CardTitle, Container } from "react-bootstrap"
 import PHeader from "../components/PHeader"
 
+import { Link } from 'react-router-dom';
+
 const ExecutionOfWorks = () => {
     return (
         <>
@@ -14,7 +16,7 @@ const ExecutionOfWorks = () => {
                     <CardBody>
                         <CardText>Выводит все выполненые заказы.</CardText>
                     </CardBody>
-                    <Button>Просмотреть</Button>
+                    <Button as={Link} to='/executionofworks/orderallfinish'>Просмотреть</Button>
                 </Card>
                 <Card style={{marginTop: '10px'}}>
                     <CardHeader>
@@ -23,7 +25,7 @@ const ExecutionOfWorks = () => {
                     <CardBody>
                         <CardText>Выводит заказы которые оплачены.</CardText>
                     </CardBody>
-                    <Button>Просмотреть</Button>
+                    <Button as={Link} to='/executionofworks/ordernofinish'>Просмотреть</Button>
                 </Card>
                 <Card style={{marginTop: '10px'}}>
                     <CardHeader>

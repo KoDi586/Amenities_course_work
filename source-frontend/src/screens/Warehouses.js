@@ -1,6 +1,8 @@
 import { Button, Card, CardBody, CardHeader, CardText, CardTitle, Container } from "react-bootstrap"
 import PHeader from "../components/PHeader"
 
+import { Link } from 'react-router-dom';
+
 const Warehouses = () => {
     return (
         <>
@@ -14,7 +16,7 @@ const Warehouses = () => {
                     <CardBody>
                         <CardText>Показывает все материалы хранящиеся в складе №1.</CardText>
                     </CardBody>
-                    <Button>Посмотреть склад</Button>
+                    <Button as={Link} to='/warehouse/warehouse1'>Посмотреть склад</Button>
                 </Card>
                 <Card style={{marginTop: '10px'}}>
                     <CardHeader>
@@ -23,7 +25,7 @@ const Warehouses = () => {
                     <CardBody>
                         <CardText>Показывает все материалы хранящиеся в складе №2.</CardText>
                     </CardBody>
-                    <Button>Посмотреть склад</Button>
+                    <Button as={Link} to='/warehouse/warehouse2'>Посмотреть склад</Button>
                 </Card>
                 <Card style={{marginTop: '10px'}}>
                     <CardHeader>
@@ -32,7 +34,7 @@ const Warehouses = () => {
                     <CardBody>
                         <CardText>Показывает все материалы хранящиеся в складе №3.</CardText>
                     </CardBody>
-                    <Button>Посмотреть склад</Button>
+                    <Button as={Link} to='/warehouse/warehouse3'>Посмотреть склад</Button>
                 </Card>
                 <Card style={{marginTop: '10px'}}>
                     <CardHeader>
@@ -41,7 +43,7 @@ const Warehouses = () => {
                     <CardBody>
                         <CardText>Показывает все материалы хранящиеся во всех складах.</CardText>
                     </CardBody>
-                    <Button>Посмотреть склад</Button>
+                    <Button as={Link} to='/warehouse/allmaterials'>Посмотреть материалы</Button>
                 </Card>
                 <Card style={{marginTop: '10px'}}>
                     <CardHeader>

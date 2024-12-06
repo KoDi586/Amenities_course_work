@@ -1,6 +1,5 @@
 import PHeader from "../components/PHeader"
-import { Button, Card, Container, Table } from "react-bootstrap";
-import PHeader from "../components/PHeader";
+import { Card, Container, Table } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import ip from "../ApiConfig";
@@ -24,7 +23,7 @@ const OrderAllFinish = () => {
             <PHeader/>
             <Container style={{marginTop: '80px'}}>
                     <Card style={{padding:'25px'}}>
-                        <h1 style={{textAlign: 'center'}}>Выполнение заказов</h1>
+                        <h1 style={{textAlign: 'center'}}>Выполненые заказы</h1>
                         <Table style={{marginTop: '25px'}}>
                             <thead>
                                 <tr style={{textAlign: 'center'}}>
@@ -38,11 +37,10 @@ const OrderAllFinish = () => {
                                     <th>Статус заказа</th>
                                     <th>Дата оплаты</th>
                                     <th>Дата завершения</th>
-                                    <th>Завершить</th>
                                 </tr>
                             </thead>
                             <tbody style={{textAlign: 'center'}}>
-                                {payorder.map((orders) => (
+                                {finishallorder.map((orders) => (
                                     <tr key={orders.orderId}>
                                         <td>{orders.order_id}</td>
                                         <td>{orders.client.name}</td>
@@ -66,4 +64,6 @@ const OrderAllFinish = () => {
                 </Container>
         </>
     )
-}
+};
+
+export default OrderAllFinish;

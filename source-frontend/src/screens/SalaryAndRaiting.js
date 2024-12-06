@@ -1,6 +1,8 @@
 import { Button, Card, CardBody, CardHeader, CardText, CardTitle, Container } from "react-bootstrap"
 import PHeader from "../components/PHeader"
 
+import { Link } from 'react-router-dom';
+
 const SalaryAndRating = () => {
     return (
         <>
@@ -14,7 +16,7 @@ const SalaryAndRating = () => {
                     <CardBody>
                         <CardText>Показывает сотрудников от самого лучшего до самого худшего.</CardText>
                     </CardBody>
-                    <Button>Посмотреть</Button>
+                    <Button as={Link} to='/salaryandraiting/raiting'>Посмотреть</Button>
                 </Card>
                 <Card style={{marginTop: '10px'}}>
                     <CardHeader>
@@ -23,7 +25,7 @@ const SalaryAndRating = () => {
                     <CardBody>
                         <CardText>Выводит всех сотрудников с начисленной и выплаченной зарплатой.</CardText>
                     </CardBody>
-                    <Button>Посмотреть склад</Button>
+                    <Button as={Link} to='/salaryandraiting/salary'>Посмотреть</Button>
                 </Card>
             </Container>
         </>
