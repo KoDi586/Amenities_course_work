@@ -8,7 +8,7 @@ const MainPage = () => {
         <>
             <PHeader/>
             <Container style={{marginTop: '75px'}}>
-                <h1 style={{textAlign: 'center', marginBottom: '15px'}}>Работа с заказами</h1>
+                <h1 style={{textAlign: 'center', marginBottom: '15px'}}>Главное меню</h1>
                 <Card>
                     <CardHeader>
                         <CardTitle>Все услуги</CardTitle>

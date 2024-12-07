@@ -35,9 +35,9 @@ const Raiting = () => {
                                 </tr>
                             </thead>
                             <tbody style={{textAlign: 'center'}}>
-                                {raiting.map((rat) => (
+                                {raiting.map((rat, key) => (
                                     <tr>
-                                        <td>{rat.employee_id}</td>
+                                        <td>{key + 1}</td>
                                         <td>{rat.total_name}</td>
                                         <td>{rat.contact_info}</td>
                                         <td>{rat.position}</td>
