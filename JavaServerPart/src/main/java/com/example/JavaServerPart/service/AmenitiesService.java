@@ -12,6 +12,8 @@ import com.example.JavaServerPart.dto.materials.put.CreateBoughtMaterialsRequest
 import com.example.JavaServerPart.dto.order.get.ChildrenOrderResponseDto;
 import com.example.JavaServerPart.dto.order.get.ClientResponseDto;
 import com.example.JavaServerPart.dto.order.get.ListAllOrderResponseDto;
+import com.example.JavaServerPart.dto.order.post.ClientRequestDto;
+import com.example.JavaServerPart.dto.order.post.CreateOrderRequestDto;
 import com.example.JavaServerPart.dto.provider.AllProviderResponseDto;
 import com.example.JavaServerPart.dto.provider.ChildrenProviderResponseDto;
 import com.example.JavaServerPart.dto.report.money.AllMoveMoneyResponseDto;
@@ -193,7 +195,7 @@ public class AmenitiesService {
     public AllMaterialsResponseDto getAllWithoutParams() {
 
         List<Material> materialList = materialRepository.findAll();
-        List <ChildrenMaterialResponseDto> children = new ArrayList<>();
+        List<ChildrenMaterialResponseDto> children = new ArrayList<>();
         for (Material material : materialList) {
             children.add(converterMaterialModelToDto(material));
         }
@@ -213,7 +215,7 @@ public class AmenitiesService {
 
         List<Material> materialList = materialRepository.findAllByWarehouseId(warehouseId);
 
-        List <ChildrenMaterialResponseDto> children = new ArrayList<>();
+        List<ChildrenMaterialResponseDto> children = new ArrayList<>();
         for (Material material : materialList) {
             children.add(converterMaterialModelToDto(material));
         }
@@ -340,7 +342,7 @@ public class AmenitiesService {
         for (Integer amenitiesId : order.getAmenitiesIds()) {
             List<Long> materials = spentMaterialsByAmenitiesId(amenitiesId);
             for (Long materialId : materials) {   // добавляю в список для отчета по тратам материалов
-                if(materialsIdsSpentCount.containsKey(materialId)) {
+                if (materialsIdsSpentCount.containsKey(materialId)) {
                     materialsIdsSpentCount.replace(materialId, materialsIdsSpentCount.get(materialId) + 1);
                 } else {
                     materialsIdsSpentCount.put(materialId, 1);
@@ -382,11 +384,57 @@ public class AmenitiesService {
     private void employeeCountWorkPlusOne(Long employeeId) {
         try {
             Employee employee = employeeRepository.findById(employeeId).get();
-            employee.setCountFinish(employee.getCountFinish()+1);
+            employee.setCountFinish(employee.getCountFinish() + 1);
             employeeRepository.save(employee);
         } catch (Exception e) {
             log.warn("error in set data in employee");
             throw new PutOrderException("error");
         }
+    }
+
+    public void postOrder(CreateOrderRequestDto dto) {
+        Order order = new Order();
+        List<Integer> amenitiesIds = converterAmenitiesNamesToIds(dto.getAmenities_names());
+        order.setAmenitiesIds(amenitiesIds);
+
+        Client client = converterClientDtoToModel(dto.getClient());
+
+        try {
+            client = clientRepository.save(client);
+            order.setClientId(client.getId());
+
+            order.setStatus("не оплачен");
+            order.setEmployeeId(randomByAllEmployees());  //рандомно выбрать из 10 сотрудников
+            order.setTotalPrice(findTotalPriceFromAmenitiesIds(amenitiesIds)); //по услугам и их материалам
+            orderRepository.save(order);
+
+        } catch (Exception e) {
+            throw new PutOrderException("error");
+        }
+    }
+
+    private Client converterClientDtoToModel(ClientRequestDto dto) {
+        Client client;
+        try {
+            client = clientRepository.findByEmail().get();
+        } catch (Exception e) {
+            client = new Client();
+            client.setName(dto.getName());
+            client.setSecondName(dto.getSecond_name());
+            client.setEmail(dto.getEmail());
+            client.setPhone(dto.getPhone());
+            client.setCard(dto.getCard());
+        }
+
+        return client;
+    }
+
+    private List<Integer> converterAmenitiesNamesToIds(String[] amenitiesNames) {
+        List<Integer> result = new ArrayList<>();
+        for (String amenitiesName : amenitiesNames) {
+            result.add(amenitiesRepository.findByTitle(amenitiesName).getId();
+
+        }
+        return result;
     }
 }

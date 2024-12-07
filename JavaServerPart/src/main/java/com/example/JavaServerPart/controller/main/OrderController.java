@@ -19,8 +19,13 @@ public class OrderController {
     private final AmenitiesService service;
 
     @PostMapping
-    public ResponseEntity<Void> postOrder(@RequestBody CreateOrderRequestDto createOrderRequestDto) {
-        log.info("order controller method postOrder entity: {}", createOrderRequestDto);
+    public ResponseEntity<Void> postOrder(@RequestBody CreateOrderRequestDto dto) {
+        log.info("order controller method postOrder entity: {}", dto);
+        try {
+            service.postOrder(dto);
+        } catch (PutOrderException e) {
+            return ResponseEntity.status(409).build();
+        }
         return ResponseEntity.ok().build();
     }
 
