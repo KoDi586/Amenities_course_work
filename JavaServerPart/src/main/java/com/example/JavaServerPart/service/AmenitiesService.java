@@ -170,24 +170,14 @@ public class AmenitiesService {
     }
 
     public AllMaterialsResponseDto getAllByWarehouseId(Long warehouseId) {
-        return new AllMaterialsResponseDto(
-                List.of(
-                        new ChildrenMaterialResponseDto(
-                                2L,
-                                "name1",
-                                3L,
 
-                                3_000
-                        ),
-                        new ChildrenMaterialResponseDto(
-                                1L,
-                                "name1",
-                                2L,
+        List<Material> materialList = materialRepository.findAllByWarehouseId(warehouseId);
 
-                                3_000
-                        )
-                )
-        );
+        List <ChildrenMaterialResponseDto> children = new ArrayList<>();
+        for (Material material : materialList) {
+            children.add(converterMaterialModelToDto(material));
+        }
+        return new AllMaterialsResponseDto(children);
     }
 
     public AllProviderResponseDto getAllProvider() {
