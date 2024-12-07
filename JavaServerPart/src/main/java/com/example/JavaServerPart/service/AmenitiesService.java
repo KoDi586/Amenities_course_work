@@ -18,6 +18,7 @@ import com.example.JavaServerPart.dto.report.money.AllMoveMoneyResponseDto;
 import com.example.JavaServerPart.dto.report.money.ChildrenMoveMoneyResponseDto;
 import com.example.JavaServerPart.dto.report.order_master_materials.AllOrderMasterAndMaterialsResponseDto;
 import com.example.JavaServerPart.dto.report.order_master_materials.ChildrenOrderMasterAndMaterialsResponseDto;
+import com.example.JavaServerPart.exception.PutOrderException;
 import com.example.JavaServerPart.model.Client;
 import com.example.JavaServerPart.model.Employee;
 import com.example.JavaServerPart.model.Material;
@@ -27,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -305,5 +307,16 @@ public class AmenitiesService {
 
     public void createBoughtMaterialsFromRandomProvider(CreateBoughtMaterialsRequestDto dto) {
 
+    }
+
+    public void orderPayingSetData(Long orderId) {
+        try {
+            Order order = orderRepository.findById(orderId).get();
+            order.setDateOfPayed(LocalDateTime.now().toString());
+            orderRepository.save(order);
+        } catch (Exception e) {
+            log.warn("error in order repository methods");
+            throw new PutOrderException("error");
+        }
     }
 }

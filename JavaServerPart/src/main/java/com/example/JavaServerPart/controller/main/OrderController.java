@@ -2,6 +2,7 @@ package com.example.JavaServerPart.controller.main;
 
 import com.example.JavaServerPart.dto.order.get.ListAllOrderResponseDto;
 import com.example.JavaServerPart.dto.order.post.CreateOrderRequestDto;
+import com.example.JavaServerPart.exception.PutOrderException;
 import com.example.JavaServerPart.service.AmenitiesService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,11 @@ public class OrderController {
     @PutMapping("/pay")
     public ResponseEntity<Void> putPayOrder(@RequestParam Long order_id) {
         log.info("order controller method putPayOrder param: {}", order_id);
+        try {
+            service.orderPayingSetData(order_id);
+        } catch (PutOrderException e) {
+            return ResponseEntity.status(469).build();
+        }
         return ResponseEntity.ok().build();
     }
 
