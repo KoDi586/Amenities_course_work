@@ -129,22 +129,16 @@ public class AmenitiesService {
     }
 
     public ListAllOrderResponseDto getFinishOrder() {
-        return new ListAllOrderResponseDto(List.of(new ChildrenOrderResponseDto(
-                1L,
-                new ClientResponseDto(
-                        "name",
-                        "secondName",
-                        "email",
-                        "phone",
-                        "card"
-                ),
-                List.of("amenities_name_1", "amenities_name_2"),
-                "status",
-                "employee_name",
-                "date_of_payed",
-                "date_of_finished",
-                1_000
-        )));
+        List<Order> orderList = orderRepository.findAll();
+
+        List<ChildrenOrderResponseDto> children = new ArrayList<>();
+        for (Order order : orderList) {
+            if (order.getDateOfPayed() != null && order.getDateOfFinish() != null) {
+                children.add(converterOrderModelToDto(order));
+            }
+        }
+
+        return new ListAllOrderResponseDto(children);
     }
 
     public AllEmployeesResponseDto getAllEmployee() {
