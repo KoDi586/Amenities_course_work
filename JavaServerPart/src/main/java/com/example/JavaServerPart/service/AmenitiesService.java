@@ -19,10 +19,7 @@ import com.example.JavaServerPart.dto.report.money.ChildrenMoveMoneyResponseDto;
 import com.example.JavaServerPart.dto.report.order_master_materials.AllOrderMasterAndMaterialsResponseDto;
 import com.example.JavaServerPart.dto.report.order_master_materials.ChildrenOrderMasterAndMaterialsResponseDto;
 import com.example.JavaServerPart.exception.PutOrderException;
-import com.example.JavaServerPart.model.Client;
-import com.example.JavaServerPart.model.Employee;
-import com.example.JavaServerPart.model.Material;
-import com.example.JavaServerPart.model.Order;
+import com.example.JavaServerPart.model.*;
 import com.example.JavaServerPart.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +27,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -309,13 +308,84 @@ public class AmenitiesService {
 
     }
 
-    public void orderPayingSetData(Long orderId) {
+    public void orderPayingSetDate(Long orderId) {
         try {
             Order order = orderRepository.findById(orderId).get();
             order.setDateOfPayed(LocalDateTime.now().toString());
+            order.setStatus("оплачен, в работе");
             orderRepository.save(order);
         } catch (Exception e) {
-            log.warn("error in order repository methods");
+            log.warn("error in order repository methods paying");
+            throw new PutOrderException("error");
+        }
+    }
+
+    public void orderFinishingSetDate(Long orderId) {
+        try {
+            Order order = orderRepository.findById(orderId).get();
+            order.setDateOfFinish(LocalDateTime.now().toString());
+            order.setStatus("выполнен");
+            orderRepository.save(order);
+
+            finishWorkOrder(order);
+        } catch (Exception e) {
+            log.warn("error in order repository methods finishing");
+            throw new PutOrderException("error");
+        }
+    }
+
+    private void finishWorkOrder(Order order) {
+        Map<Long, Integer> materialsIdsSpentCount = new HashMap<>();
+        employeeCountWorkPlusOne(order.getEmployeeId());
+        for (Integer amenitiesId : order.getAmenitiesIds()) {
+            List<Long> materials = spentMaterialsByAmenitiesId(amenitiesId);
+            for (Long materialId : materials) {   // добавляю в список для отчета по тратам материалов
+                if(materialsIdsSpentCount.containsKey(materialId)) {
+                    materialsIdsSpentCount.replace(materialId, materialsIdsSpentCount.get(materialId) + 1);
+                } else {
+                    materialsIdsSpentCount.put(materialId, 1);
+                }
+            }
+
+        }
+        materialTurnoverAddByMap(materialsIdsSpentCount);
+    }
+
+    private void materialTurnoverAddByMap(Map<Long, Integer> materialsIdsSpentCount) {
+        for (Long materialId : materialsIdsSpentCount.keySet()) {
+            MaterialTurnover materialTurnover = new MaterialTurnover();
+            materialTurnover.setMaterialId(materialId);
+            materialTurnover.setType("потраченно");
+            materialTurnover.setCount(materialsIdsSpentCount.get(materialId));
+        }
+    }
+
+    private List<Long> spentMaterialsByAmenitiesId(Integer amenitiesId) {
+        // список для создания движения материалов
+        List<Long> materialsIds = new ArrayList<>();
+
+        try {
+            Amenities amenities = amenitiesRepository.findById(amenitiesId.longValue()).get();
+            for (Integer materialId : amenities.getMaterials()) {
+                Material material = materialRepository.findById(materialId.longValue()).get();
+                materialsIds.add(materialId.longValue());
+                material.setCountOfWarehouse(material.getCountOfWarehouse() - 1);
+                materialRepository.save(material);
+            }
+        } catch (Exception e) {
+            log.warn("error in spent materials: {}", materialsIds);
+            throw new PutOrderException("error");
+        }
+        return materialsIds;
+    }
+
+    private void employeeCountWorkPlusOne(Long employeeId) {
+        try {
+            Employee employee = employeeRepository.findById(employeeId).get();
+            employee.setCountFinish(employee.getCountFinish()+1);
+            employeeRepository.save(employee);
+        } catch (Exception e) {
+            log.warn("error in set data in employee");
             throw new PutOrderException("error");
         }
     }

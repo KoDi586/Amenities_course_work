@@ -28,7 +28,7 @@ public class OrderController {
     public ResponseEntity<Void> putPayOrder(@RequestParam Long order_id) {
         log.info("order controller method putPayOrder param: {}", order_id);
         try {
-            service.orderPayingSetData(order_id);
+            service.orderPayingSetDate(order_id);
         } catch (PutOrderException e) {
             return ResponseEntity.status(469).build();
         }
@@ -38,6 +38,11 @@ public class OrderController {
     @PutMapping("/finish")
     public ResponseEntity<Void> putFinishOrder(@RequestParam Long order_id) {
         log.info("order controller method putFinishOrder param: {}", order_id);
+        try {
+            service.orderFinishingSetDate(order_id);
+        } catch (PutOrderException e) {
+            return ResponseEntity.status(469).build();
+        }
         return ResponseEntity.ok().build();
     }
 
