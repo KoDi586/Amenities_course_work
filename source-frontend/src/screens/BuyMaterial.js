@@ -7,77 +7,136 @@ import ip from "../ApiConfig";
 
 const BuyMaterial = () => {
 
-    const [formData, setFormData] = useState({
-        orderItems: []
-    });
+    const [ materials, setMaterials ] = useState([])
+    
+    useEffect(
+        () => {
+            axios.get("http://"+ ip +":8089/api/material/all").then(response => {
+                setMaterials(response.data.children)
+            }).catch(error => {
+                console.log(error);
+            });
+        }, []
+    )
 
-    const handleCheckboxChange = (e) => {
-        const { value, checked } = e.target;
+    const [ formData, setFormData ] = useState({
+        warehouse_id: Number(),
+        bought_materials: [
+          
+        ]
+      })
 
-        setFormData((prev) => {
-            const newOrderItems = [...prev.orderItems];
-            if (checked) {
-                
-                newOrderItems.push({ material_id: value, count_of_bought: 0 });
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        
+        const boughtMaterials = formData.boughtMaterials.map(item => ({
+            material_id: item.material_id,
+            count_of_bought: item.count_of_bought
+        }));
+
+        const requestBody = {
+            warehouse_id: formData.warehouse_id,
+            bought_materials: boughtMaterials
+        };
+
+        try {
+            const response = await axios.put("http://"+ ip +":8089/api/material/bought-from-provider", requestBody, {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            
+            if (response.status === 200) {
+                // Обработка успешного ответа
             } else {
-                
-                return {
-                    ...prev,
-                    orderItems: newOrderItems.filter((item) => item.product !== value),
-                };
+                // Обработка ошибки
             }
-            return { ...prev, orderItems: newOrderItems };
-        });
+        } catch (error) {
+            // Обработка исключений
+            console.error("Произошла ошибка при отправке запроса:", error);
+        }
     };
 
-    const handleQuantityChange = (e, productId) => {
-        const { value } = e.target;
-        const count = parseInt(value) || 0;
-
-        setFormData((prev) => {
-            const newOrderItems = prev.orderItems.map((item) => 
-                item.product === productId ? { ...item, count } : item
-            );
-            return { ...prev, orderItems: newOrderItems };
-        });
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setFormData(prevData => ({
+            ...prevData,
+            [name]: value
+        }));
     };
+    
+    const handleCheckboxChange = (event) => {
+        const { value } = event.target;
+        
+        if (formData.boughtMaterials.some(item => item.material_id === Number(value))) {
+            setFormData(prevData => ({
+                ...prevData,
+                boughtMaterials: prevData.boughtMaterials.filter(item => item.material_id !== Number(value))
+            }));
+        } else {
+            setFormData(prevData => ({
+                ...prevData,
+                boughtMaterials: [...prevData.boughtMaterials, { material_id: Number(value), count_of_bought: 0 }]}));
+            }
+        };
+        
+        const handleQuantityChange = (event, material_id) => {
+            const { value } = event.target;
+            setFormData(prevData => ({
+                ...prevData,
+                boughtMaterials: prevData.boughtMaterials.map(item =>
+                    item.material_id === material_id ? { ...item, count_of_bought: value } : item
+                )
+            }));
+        };
 
     return (
-        <>  
-            <PHeader/>
-            <Container style={{marginTop: '75px', marginBottom: '25px'}} >
-                <h1 style={{textAlign: 'center'}}>Оформление заказа</h1>
-                <Form onSubmit={handleSubmit} style={{marginBottom: '25px'}}>
-                    <Form.Group className="mb-3" controlId="formBasicCheckbox" style={{marginBottom: '25px', marginTop: '25px'}}>
-                        <Form.Label className="d-flex flex-wrap justify-content-center">Виды продуктов</Form.Label>
-                        <Container style={{gap:"30px"}} className="d-flex flex-wrap justify-content-center">
-                            {product.map((product) => (
-                                <Card key={product.id} style={{ width: '15rem', padding: '10px' }}>
+
+        <>
+            <PHeader />
+            <Container style={{ marginTop: '75px', marginBottom: '25px' }}>
+                <h1 style={{ textAlign: 'center' }}>Оформление заказа на материалы</h1>
+                <Form onSubmit={handleSubmit} style={{ marginBottom: '25px' }}>
+                    <Form.Group>
+                        <Form.Label>Выберите склад</Form.Label>
+                        <Form.Control as="select" name="warehouse_id" onChange={handleInputChange}>
+                            <option value="">Выберите склад</option>
+                            <option value="1">Склад №1</option>
+                            <option value="2">Склад №2</option>
+                            <option value="3">Склад №3</option>
+                        </Form.Control>
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Label className="d-flex flex-wrap justify-content-center">Материалы</Form.Label>
+                        <Container style={{ gap: "30px" }} className="d-flex flex-wrap justify-content-center">
+                            {materials.map((material) => (
+                                <Card key={material.material_id} style={{ width: '15rem', padding: '10px' }}>
                                     <Form.Check
                                         type="checkbox"
-                                        label={product.name}
-                                        value={product.id}
+                                        label={material.name}
+                                        value={material.material_id}
                                         onChange={handleCheckboxChange}
                                     />
                                     <Form.Control
-                                        type="text"
+                                        type="number"
                                         placeholder="Введите количество"
-                                        onChange={(e) => handleQuantityChange(e, product.id)}
-                                        disabled={!formData.orderItems.some(item => item.product === product.id)}
-                                        
+                                        onChange={(e) => handleQuantityChange(e, material.material_id)}
+                                        disabled={!formData.boughtMaterials.some(item => item.material_id === material.material_id)}
                                     />
-                                    <Form.Label>Цена за еденицу товара: {product.price} р.</Form.Label>
+                                    <Form.Label>Цена за единицу материала: {material.price} р.</Form.Label>
                                 </Card>
                             ))}
                         </Container>
                     </Form.Group>
-                    <Container  className="d-flex flex-wrap justify-content-center">
+                    <Container className="d-flex flex-wrap justify-content-center">
                         <Button variant="dark" type="submit">
                             Оформить заказ
                         </Button>
                     </Container>
                 </Form>
             </Container>
-        </>
+    </>
     )
 }
+
+export default BuyMaterial;

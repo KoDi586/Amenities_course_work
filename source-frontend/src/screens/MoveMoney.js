@@ -4,15 +4,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import ip from "../ApiConfig";
 
+const MoveMoney = () => {
 
-const Providers = () => {
-
-    const [ providers, setProviders ] = useState([])
+    const [ movemoney, setMoveMoney ] = useState([])
 
     useEffect(
         () => {
-            axios.get("http://"+ ip +":8089/api/provider/all").then(response => {
-                setProviders(response.data.children)
+            axios.get("http://"+ ip +":8089/api/report/move-money").then(response => {
+                setMoveMoney(response.data.children)
             }).catch(error => {
                 console.log(error);
             });
@@ -24,21 +23,25 @@ const Providers = () => {
             <PHeader/>
             <Container style={{marginTop: '80px'}}>
                 <Card style={{padding:'25px'}}>
-                    <h1 style={{textAlign: 'center'}}>Поставщики</h1>
+                    <h1 style={{textAlign: 'center'}}>Отчет по движению денежных средств</h1>
                     <Table style={{marginTop: '25px'}}>
                         <thead>
                             <tr style={{textAlign: 'center'}}>
                                 <th>№</th>
-                                <th>Название</th>
-                                <th>Контактная информация</th>
+                                <th>Материал</th>
+                                <th>Сотрудник</th>
+                                <th>Цена</th>
+                                <th>Закупка или продажа</th>
                             </tr>
                         </thead>
                         <tbody style={{textAlign: 'center'}}>
-                                {providers.map((provider) => (
+                                {movemoney.map((money, key) => (
                                     <tr>
-                                        <td>{provider.id}</td>
-                                        <td>{provider.name}</td>
-                                        <td>{provider.contact_info}</td>
+                                        <td>{key}</td>
+                                        <td>{money.thing}</td>
+                                        <td>{money.person}</td>
+                                        <td>{money.price}</td>
+                                        <td>{money.type}</td>
                                     </tr>
                                 ))}
                         </tbody>
@@ -49,4 +52,4 @@ const Providers = () => {
     )
 };
 
-export default Providers;
+export default MoveMoney;

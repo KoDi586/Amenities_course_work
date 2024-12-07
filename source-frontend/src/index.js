@@ -21,6 +21,9 @@ import Warehouse3 from './screens/Warehouse3';
 import AllMaterials from './screens/AllMaterials';
 import Raiting from './screens/Raiting';
 import Salary from './screens/Salary';
+import BuyMaterial from './screens/BuyMaterial';
+import MoveMoney from './screens/MoveMoney';
+import OrderMasterMaterials from './screens/OrderMasterMaterials';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -37,18 +40,22 @@ root.render(
         <Route path='/executionofworks' element={<ExecutionOfWorks/>}/>
           <Route path='/executionofworks/orderallfinish' element={<OrderAllFinish/>}/>
           <Route path='/executionofworks/ordernofinish' element={<OrderNoFinish/>}/>
-        <Route path='/amenities' element={<Amenities/>}/>
+          <Route path='/executionofworks/movemoney' element={<MoveMoney/>}/>
+          <Route path='/executionofworks/ordermastermaterials' element={<OrderMasterMaterials/>}/>
           
         <Route path='/warehouse' element={<Warehouses/>}/>
           <Route path='/warehouse/warehouse1' element={<Warehouse1/>}/>
           <Route path='/warehouse/warehouse2' element={<Warehouse2/>}/>
           <Route path='/warehouse/warehouse3' element={<Warehouse3/>}/>
           <Route path='/warehouse/allmaterials' element={<AllMaterials/>}/>
+          <Route path='/warehouse/buymaterial' element={<BuyMaterial/>}/>
+
         <Route path='/salaryandraiting' element={<SalaryAndRating/>}/>
           <Route path='/salaryandraiting/raiting' element={<Raiting/>}/>
           <Route path='/salaryandraiting/salary' element={<Salary/>}/>
-        <Route path='/providers' element={<Providers/>}/>
 
+        <Route path='/providers' element={<Providers/>}/>
+        <Route path='/amenities' element={<Amenities/>}/>
       </Routes>
     </Router>
   </React.StrictMode>

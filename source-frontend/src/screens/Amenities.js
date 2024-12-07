@@ -47,11 +47,11 @@ const Amenities = () => {
             <PHeader/>
             <h1></h1>
             <Container className="d-flex justify-content-center" style={{marginTop: '75px'}}>
-                <Card style={{width: '400px'}}>
+                <div style={{width: '400px'}}>
                             <h1 style={{ textAlign: 'center' }}>Диаграмма цен</h1>
                             <Pie width={1} height={1} data={chartData} />
-                </Card>
-                <Card style={{margin:'0',padding:'25px'}}>
+                </div>
+                <div style={{margin:'0',padding:'25px'}}>
                     <h1 style={{textAlign:'center'}}>Прайс лист услуг</h1>
                     <Table style={{marginTop: '25px'}}>
                         <thead>
@@ -85,7 +85,7 @@ const Amenities = () => {
                             ))}
                         </tbody>
                     </Table>
-                </Card> 
+                </div> 
             </Container>
         </>
     )

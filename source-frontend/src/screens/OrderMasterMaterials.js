@@ -4,15 +4,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import ip from "../ApiConfig";
 
-
-const Providers = () => {
-
-    const [ providers, setProviders ] = useState([])
+const OrderMasterMaterials = () => {
+  
+    const [ ordermastermaterials, setOrderMasterMaterials ] = useState([])
 
     useEffect(
         () => {
-            axios.get("http://"+ ip +":8089/api/provider/all").then(response => {
-                setProviders(response.data.children)
+            axios.get("http://"+ ip +":8089/api/report/order-master-materials").then(response => {
+                setOrderMasterMaterials(response.data.children)
             }).catch(error => {
                 console.log(error);
             });
@@ -24,21 +23,25 @@ const Providers = () => {
             <PHeader/>
             <Container style={{marginTop: '80px'}}>
                 <Card style={{padding:'25px'}}>
-                    <h1 style={{textAlign: 'center'}}>Поставщики</h1>
+                    <h1 style={{textAlign: 'center'}}>Учет выполнения заказов</h1>
                     <Table style={{marginTop: '25px'}}>
                         <thead>
                             <tr style={{textAlign: 'center'}}>
                                 <th>№</th>
-                                <th>Название</th>
-                                <th>Контактная информация</th>
+                                <th>ФИО сотрудника</th>
+                                <th>Материалы</th>
                             </tr>
                         </thead>
                         <tbody style={{textAlign: 'center'}}>
-                                {providers.map((provider) => (
+                                {ordermastermaterials.map((allinfo) => (
                                     <tr>
-                                        <td>{provider.id}</td>
-                                        <td>{provider.name}</td>
-                                        <td>{provider.contact_info}</td>
+                                        <td>{allinfo.order_id}</td>
+                                        <td>{allinfo.employee_total_name}</td>
+                                        <td>
+                                            {allinfo.materials.map((material) => (
+                                                <p>{material}</p>
+                                            ))}
+                                        </td>
                                     </tr>
                                 ))}
                         </tbody>
@@ -49,4 +52,4 @@ const Providers = () => {
     )
 };
 
-export default Providers;
+export default OrderMasterMaterials;

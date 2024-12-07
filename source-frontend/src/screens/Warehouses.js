@@ -52,7 +52,7 @@ const Warehouses = () => {
                     <CardBody>
                         <CardText>Оформит заказ материалов у поставщика.</CardText>
                     </CardBody>
-                    <Button>Оформить заказ</Button>
+                    <Button as={Link} to='/warehouse/buymaterial'>Оформить заказ</Button>
                 </Card>
             </Container>
         </>

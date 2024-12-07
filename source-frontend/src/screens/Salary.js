@@ -9,7 +9,7 @@ const Salary = () => {
 
     useEffect(
         () => {
-            axios.get("http://"+ ip +":8089/api/provider/all").then(response => {
+            axios.get("http://"+ ip +":8089 api/employee/report-by-salary").then(response => {
                 setSalary(response.data.children)
             }).catch(error => {
                 console.log(error);
