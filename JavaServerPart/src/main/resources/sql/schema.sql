@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS public.client (
     card VARCHAR(50)
 );
 
-CREATE TABLE IF NOT EXISTS public.Clientamenities (
+CREATE TABLE IF NOT EXISTS public.amenities (
     id bigint PRIMARY KEY,
     title VARCHAR(255),
     description varchar(255),
@@ -45,7 +45,7 @@ create table if not exists public.provider(
 CREATE TABLE IF NOT EXISTS public."order" (
     id bigint PRIMARY KEY,
     client_id bigint,
-    amenities_id bigint,
+    amenities_ids integer[],
     status varchar(255),
     employee_id bigint,
     date_of_payed varchar(30),

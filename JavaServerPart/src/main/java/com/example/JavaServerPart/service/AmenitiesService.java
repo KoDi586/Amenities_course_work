@@ -8,9 +8,8 @@ import com.example.JavaServerPart.dto.employee.salary.AllEmployeeSalaryReportRes
 import com.example.JavaServerPart.dto.employee.salary.ChildrenEmployeeSalaryReportResponseDto;
 import com.example.JavaServerPart.dto.materials.get.AllMaterialsResponseDto;
 import com.example.JavaServerPart.dto.materials.get.ChildrenMaterialResponseDto;
-import com.example.JavaServerPart.dto.materials.put.BoughtMaterialsRequestDto;
 import com.example.JavaServerPart.dto.materials.put.CreateBoughtMaterialsRequestDto;
-import com.example.JavaServerPart.dto.order.get.ChildrenAllOrderResponseDto;
+import com.example.JavaServerPart.dto.order.get.ChildrenOrderResponseDto;
 import com.example.JavaServerPart.dto.order.get.ClientResponseDto;
 import com.example.JavaServerPart.dto.order.get.ListAllOrderResponseDto;
 import com.example.JavaServerPart.dto.provider.AllProviderResponseDto;
@@ -19,15 +18,16 @@ import com.example.JavaServerPart.dto.report.money.AllMoveMoneyResponseDto;
 import com.example.JavaServerPart.dto.report.money.ChildrenMoveMoneyResponseDto;
 import com.example.JavaServerPart.dto.report.order_master_materials.AllOrderMasterAndMaterialsResponseDto;
 import com.example.JavaServerPart.dto.report.order_master_materials.ChildrenOrderMasterAndMaterialsResponseDto;
+import com.example.JavaServerPart.model.Client;
 import com.example.JavaServerPart.model.Employee;
 import com.example.JavaServerPart.model.Material;
+import com.example.JavaServerPart.model.Order;
 import com.example.JavaServerPart.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -46,26 +46,77 @@ public class AmenitiesService {
     private final ProviderOrderRepository providerOrderRepository;
 
     public ListAllOrderResponseDto getNoPayOrder() {
-        return new ListAllOrderResponseDto(List.of(new ChildrenAllOrderResponseDto(
-                1L,
-                new ClientResponseDto(
-                        "name",
-                        "secondName",
-                        "email",
-                        "phone",
-                        "card"
-                ),
-                new String[]{"amenities_name_1", "amenities_name_2"},
-                "status",
-                "employee_name",
-                "date_of_payed",
-                "date_of_finished",
-                1_000
-        )));
+
+        List<Order> orderList = orderRepository.findAll();
+
+        List<ChildrenOrderResponseDto> children = new ArrayList<>();
+        for (Order order : orderList) {
+            if (order.getDateOfPayed() == null) {
+                children.add(converterOrderModelToDto(order));
+            }
+        }
+
+        return new ListAllOrderResponseDto(children);
+    }
+
+    private ChildrenOrderResponseDto converterOrderModelToDto(Order order) {
+        Client client;
+        try {
+            client = clientRepository.findById(order.getClientId()).get();
+        } catch (Exception e) {
+            log.warn("error in client find by id in order: {}", order);
+            return null;
+        }
+        ClientResponseDto clientResponseDto = converterClientModelToDto(client);
+        List<Integer> amenitiesIds = order.getAmenitiesIds();
+        return new ChildrenOrderResponseDto(
+                order.getId(),
+                clientResponseDto,
+                findAmenitiesNamesByIdList(amenitiesIds),
+                order.getStatus(),
+                findEmployeeNameById(order.getEmployeeId()),
+                order.getDateOfPayed(),
+                order.getDateOfFinish(),
+                order.getTotalPrice()
+        );
+    }
+
+    private ClientResponseDto converterClientModelToDto(Client client) {
+        return new ClientResponseDto(
+                client.getName(),
+                client.getSecondName(),
+                client.getEmail(),
+                client.getPhone(),
+                client.getCard()
+        );
+    }
+
+    private String findEmployeeNameById(Long employeeId) {
+        String totalName = null;
+        try {
+            totalName = employeeRepository.findById(employeeId).get().getTotalName();
+        } catch (Exception e) {
+            log.warn("error in employee find by id");
+            return null;
+        }
+        return totalName;
+    }
+
+    private List<String> findAmenitiesNamesByIdList(List<Integer> amenitiesIds) {
+        List<String> result = new ArrayList<>();
+        try {
+            for (Integer amenitiesId : amenitiesIds) {
+                result.add(amenitiesRepository.findById(amenitiesId.longValue()).get().getTitle());
+            }
+        } catch (Exception e) {
+            log.warn("error in amenities find by id");
+            return null;
+        }
+        return result;
     }
 
     public ListAllOrderResponseDto getNoFinishOrder() {
-        return new ListAllOrderResponseDto(List.of(new ChildrenAllOrderResponseDto(
+        return new ListAllOrderResponseDto(List.of(new ChildrenOrderResponseDto(
                 1L,
                 new ClientResponseDto(
                         "name",
@@ -74,7 +125,7 @@ public class AmenitiesService {
                         "phone",
                         "card"
                 ),
-                new String[]{"amenities_name_1", "amenities_name_2"},
+                List.of("amenities_name_1", "amenities_name_2"),
                 "status",
                 "employee_name",
                 "date_of_payed",
@@ -84,7 +135,7 @@ public class AmenitiesService {
     }
 
     public ListAllOrderResponseDto getFinishOrder() {
-        return new ListAllOrderResponseDto(List.of(new ChildrenAllOrderResponseDto(
+        return new ListAllOrderResponseDto(List.of(new ChildrenOrderResponseDto(
                 1L,
                 new ClientResponseDto(
                         "name",
@@ -93,7 +144,7 @@ public class AmenitiesService {
                         "phone",
                         "card"
                 ),
-                new String[]{"amenities_name_1", "amenities_name_2"},
+                List.of("amenities_name_1", "amenities_name_2"),
                 "status",
                 "employee_name",
                 "date_of_payed",

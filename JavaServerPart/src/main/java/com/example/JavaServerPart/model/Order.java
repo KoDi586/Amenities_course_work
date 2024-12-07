@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Table(name = "\"order\"")
 @Data
@@ -17,8 +19,8 @@ public class Order {
     private Long id;
     @Column(name = "client_id")
     private Long clientId;
-    @Column(name = "amenities_id")
-    private Long amenitiesId;
+    @Column(name = "amenities_ids")
+    private List<Integer> amenitiesIds;
 
     private String status;
     @Column(name = "employee_id")

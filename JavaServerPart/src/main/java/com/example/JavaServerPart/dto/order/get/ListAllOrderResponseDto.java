@@ -10,5 +10,5 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ListAllOrderResponseDto {
-    private List<ChildrenAllOrderResponseDto> children;
+    private List<ChildrenOrderResponseDto> children;
 }
