@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.random.RandomGenerator;
 
 @Service
 @Slf4j
@@ -46,6 +47,7 @@ public class AmenitiesService {
     private final ProviderRepository providerRepository;
     private final ProviderOrderRepository providerOrderRepository;
     private final SalaryService salaryService;
+    private static final String boughtMaterialMessage = "закупка материалов";
 
     public ListAllOrderResponseDto getNoPayOrder() {
 
@@ -293,23 +295,56 @@ public class AmenitiesService {
     }
 
     public AllMoveMoneyResponseDto getReportByMoveMoney() {
+        List<Order> orderList = orderRepository.findAll();
+        List<MaterialTurnover> materialTurnoverList = materialTurnoverRepository.findAllByType(boughtMaterialMessage);
+        List<ChildrenMoveMoneyResponseDto> children = new ArrayList<>();
+        for (Order order : orderList) {
+            children.add(createMoneyReportByOder(order));
+        }
+        for (MaterialTurnover materialTurnover : materialTurnoverList) {
+            children.add(createMoneyReportByMaterialTurnover(materialTurnover));
+        }
+        Collections.shuffle(children);
+        return new AllMoveMoneyResponseDto(children);
+    }
 
-        return new AllMoveMoneyResponseDto(
-                List.of(
-                        new ChildrenMoveMoneyResponseDto(
-                                "material",
-                                "oleg",
-                                30_000,
-                                "закупка"
-                        ),
-                        new ChildrenMoveMoneyResponseDto(
-                                "order_228",
-                                "murat",
-                                10_000,
-                                "продажа"
-                        )
-                )
+    private ChildrenMoveMoneyResponseDto createMoneyReportByMaterialTurnover(MaterialTurnover materialTurnover) {
+        String materialName;
+        Integer materialPrice;
+        try {
+            materialName = materialRepository.findById(materialTurnover.getMaterialId()).get().getTitle();
+            materialPrice = materialRepository.findById(materialTurnover.getMaterialId()).get().getPrice();
+        } catch (Exception e) {
+            log.warn("error in material repository");
+            return null;
+        }
+        String providerName = null;
+        try {
+            providerName = providerRepository.findByMaterialId(materialTurnover.getMaterialId()).get().getName();
+        } catch (Exception e) {
+            log.warn("error in provider find by material id");
+        }
+        return new ChildrenMoveMoneyResponseDto(
+                "material: " + materialName,
+                providerName,
+                materialTurnover.getCount() * materialPrice,
+                materialTurnover.getType()
         );
+    }
+
+    private ChildrenMoveMoneyResponseDto createMoneyReportByOder(Order order) {
+        String clientName = findClientTotalNameNameById(order.getClientId());
+        return new ChildrenMoveMoneyResponseDto(
+                "заказ номер " + order.getId(),
+                clientName,
+                order.getTotalPrice(),
+                "выполнение заказа"
+        );
+    }
+
+    private String findClientTotalNameNameById(Long clientId) {
+        Client client = clientRepository.findById(clientId).get();
+        return client.getName() + " " + client.getSecondName();
     }
 
     public AllEmployeeSalaryReportResponseDto getReportByEmployeeSalary() {
@@ -334,7 +369,7 @@ public class AmenitiesService {
                     materialTurnoverRepository.count() + 1,
                     boughtMaterial.getMaterial_id(),
                     boughtMaterial.getCount_of_bought(),
-                    "закупка материалов"
+                    boughtMaterialMessage
             );
             materialTurnoverRepository.save(materialTurnover);
         }

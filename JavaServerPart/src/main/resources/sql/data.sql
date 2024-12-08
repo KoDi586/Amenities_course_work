@@ -91,3 +91,17 @@ VALUES
     (9, 'Установка серверных систем', 'Установка и настройка серверов для бизнеса', false, ARRAY[6, 7], ARRAY[1], 20000),
     (10, 'Виртуализация серверов', 'Настройка виртуальных серверов и инфраструктуры', false, ARRAY[8, 9], ARRAY[2, 3], 25000)
 ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO public.provider (id, "name", contact_info, material_id)
+VALUES
+    (1, 'Tech Solutions', 'techsolutions@example.com', 1),
+    (2, 'AirCon Install', 'airconinstall@example.com', 2),
+    (3, 'NetWorks Service', 'networks@example.com', 3),
+    (4, 'ServerFix', 'serverfix@example.com', 4),
+    (5, 'Software Update Co', 'softwareupdate@example.com', 5),
+    (6, 'SafeTech Surveillance', 'safetech@example.com', 6),
+    (7, 'CoolAir Services', 'coolair@example.com', 7),
+    (8, 'IT Support Group', 'itsupport@example.com', 8),
+    (9, 'ServerTech Installations', 'servertech@example.com', 9),
+    (10, 'VirtualNet Solutions', 'virtualnet@example.com', 10)
+ON CONFLICT (id) DO NOTHING;
