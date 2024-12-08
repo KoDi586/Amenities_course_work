@@ -14,22 +14,28 @@ const Amenities = () => {
 
     const [ amenitiesall, setAmenitiesAll] = useState([])
 
-    useEffect(
-        () => {
-            axios.get("http://"+ ip +":8089/api/amenities/all").then(response => {
-                setAmenitiesAll(response.data.children)
-            }).catch(error => {
+    useEffect(() => {
+        axios.get("http://" + ip + ":8089/api/amenities/all")
+            .then(response => {
+                // Преобразуем данные, устанавливая пустые массивы для materials_names и products_names, если они равны null
+                const transformedAmenities = response.data.children.map(amenitie => ({
+                    ...amenitie,
+                    materials_names: amenitie.materials_names || ['-'],
+                    products_names: amenitie.products_names || ['-']
+                }));
+                setAmenitiesAll(transformedAmenities);
+            })
+            .catch(error => {
                 console.log(error);
             });
-        }, []
-    )
+    }, []);
     
     const chartData = {
         labels: amenitiesall.map((amenitie) => amenitie.name),
         datasets: [
             {
                 label: 'Цена услуги',
-                data: amenitiesall.map((amenitie) => amenitie.price),
+                data: amenitiesall.map((amenitie) => amenitie.price ),
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.6)',
                     'rgba(54, 162, 235, 0.6)',
@@ -46,11 +52,11 @@ const Amenities = () => {
         <>
             <PHeader/>
             <Container className="d-flex justify-content-center" style={{marginTop: '75px'}}>
-                <div style={{width: '400px', marginTop: '25px'}}>
+                <div style={{width: '400px'}}>
                             <h1 style={{ textAlign: 'center' }}>Диаграмма цен</h1>
                             <Pie width={1} height={1} data={chartData} />
                 </div>
-                <div style={{margin:'0',padding:'25px'}}>
+                <div>
                     <h1 style={{textAlign:'center'}}>Прайс лист услуг</h1>
                     <Table style={{marginTop: '25px'}}>
                         <thead>
@@ -58,6 +64,8 @@ const Amenities = () => {
                                 <th>№</th>
                                 <th>Название</th>
                                 <th>Описание</th>
+                                <th>Перечень используемых материалов</th>
+                                <th>Перечень товаров</th>
                                 <th>цена услуги</th>
                             </tr>
                         </thead>
@@ -67,6 +75,16 @@ const Amenities = () => {
                                     <td>{key + 1}</td>
                                     <td>{amenitie.name}</td>
                                     <td>{amenitie.description}</td>
+                                    <td>
+                                        {amenitie.materials_names.map((material) => (
+                                            <p>{material}</p>
+                                        ))}
+                                    </td>
+                                    <td>
+                                        {amenitie.products_names.map((product) => (
+                                            <p>{product}</p>
+                                        ))}
+                                    </td>
                                     <td>{amenitie.price} р.</td>
                                 </tr>
                             ))}
