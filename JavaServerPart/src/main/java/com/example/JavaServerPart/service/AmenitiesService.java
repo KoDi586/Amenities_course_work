@@ -241,20 +241,55 @@ public class AmenitiesService {
     }
 
     public AllOrderMasterAndMaterialsResponseDto getAllOrderMasterAndMaterialsResponseDto() {
-        return new AllOrderMasterAndMaterialsResponseDto(
-                List.of(
-                        new ChildrenOrderMasterAndMaterialsResponseDto(
-                                2L,
-                                "total_name1",
-                                List.of("mat1", "mat2")
-                        ),
-                        new ChildrenOrderMasterAndMaterialsResponseDto(
-                                2L,
-                                "total_name2",
-                                List.of("mat1", "mat2")
-                        )
-                )
+        List<Order> orderList = orderRepository.findAll();
+        List<ChildrenOrderMasterAndMaterialsResponseDto> children = new ArrayList<>();
+        for (Order order : orderList) {
+            children.add(createReportByOrderMasters(order));
+        }
+        return new AllOrderMasterAndMaterialsResponseDto(children);
+    }
+
+    private ChildrenOrderMasterAndMaterialsResponseDto createReportByOrderMasters(Order order) {
+        String employeeName = employeeRepository.findById(order.getEmployeeId()).get().getTotalName();
+        List<String> materialsNamesList = findMaterialsNamesByAmenitiesIds(order.getAmenitiesIds());
+        return new ChildrenOrderMasterAndMaterialsResponseDto(
+                order.getId(),
+                employeeName,
+                materialsNamesList
         );
+    }
+
+    private List<String> findMaterialsNamesByAmenitiesIds(List<Integer> amenitiesIds) {
+        Set<String> result = new HashSet<>();
+        for (Integer amenitiesId : amenitiesIds) {
+            Amenities amenities;
+            try {
+                amenities = amenitiesRepository.findById(amenitiesId.longValue()).get();
+            } catch (Exception e) {
+                log.warn("error in amenities repository find by id");
+                continue;
+            }
+            result.addAll(findMaterialsNamesByIdList(amenities.getMaterials()));
+        }
+        return result.stream().toList();
+    }
+
+    private List<String> findMaterialsNamesByIdList(Integer[] materials) {
+        List<String> names = new ArrayList<>();
+        for (Integer materialId : materials) {
+            Material material = null;
+            try {
+                material = materialRepository.findById(materialId.longValue()).get();
+            } catch (Exception e) {
+                log.warn("error in material find by id");
+            }
+            try {
+                names.add(material.getTitle());
+            } catch (Exception e) {
+                log.warn("error in material get tittle");
+            }
+        }
+        return names;
     }
 
     public AllMoveMoneyResponseDto getReportByMoveMoney() {
@@ -286,7 +321,6 @@ public class AmenitiesService {
         return new AllEmployeeSalaryReportResponseDto(children);
     }
 
-
     public void createBoughtMaterialsFromRandomProvider(CreateBoughtMaterialsRequestDto dto) {
         createMaterialTurnoverForMaterialBought(dto.getBought_materials());
         // создать отчет о закупке
@@ -297,7 +331,7 @@ public class AmenitiesService {
     private void createMaterialTurnoverForMaterialBought(List<BoughtMaterialsRequestDto> boughtMaterials) {
         for (BoughtMaterialsRequestDto boughtMaterial : boughtMaterials) {
             MaterialTurnover materialTurnover = new MaterialTurnover(
-                    materialTurnoverRepository.count()+1,
+                    materialTurnoverRepository.count() + 1,
                     boughtMaterial.getMaterial_id(),
                     boughtMaterial.getCount_of_bought(),
                     "закупка материалов"
