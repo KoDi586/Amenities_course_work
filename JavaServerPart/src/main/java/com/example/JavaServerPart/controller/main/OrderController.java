@@ -20,7 +20,6 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<Void> postOrder(@RequestBody CreateOrderRequestDto dto) {
-        log.info("order controller method postOrder entity: {}", dto);
         try {
             service.postOrder(dto);
         } catch (PutOrderException e) {
@@ -31,7 +30,6 @@ public class OrderController {
 
     @PutMapping("/pay")
     public ResponseEntity<Void> putPayOrder(@RequestParam Long order_id) {
-        log.info("order controller method putPayOrder param: {}", order_id);
         try {
             service.orderPayingSetDate(order_id);
         } catch (PutOrderException e) {
@@ -42,7 +40,6 @@ public class OrderController {
 
     @PutMapping("/finish")
     public ResponseEntity<Void> putFinishOrder(@RequestParam Long order_id) {
-        log.info("order controller method putFinishOrder param: {}", order_id);
         try {
             service.orderFinishingSetDate(order_id);
         } catch (PutOrderException e) {

@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 public class ProviderOrder {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column(name = "material_id")
     private Long materialId;

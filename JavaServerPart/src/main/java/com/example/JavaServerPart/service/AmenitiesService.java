@@ -28,10 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -402,7 +399,7 @@ public class AmenitiesService {
         try {
             client = clientRepository.save(client);
             order.setClientId(client.getId());
-
+            order.setId(orderRepository.count()+1);
             order.setStatus("не оплачен");
             order.setEmployeeId(randomByAllEmployees());  //рандомно выбрать из 10 сотрудников
             order.setTotalPrice(findTotalPriceFromAmenitiesIds(amenitiesIds)); //по услугам и их материалам
@@ -413,12 +410,51 @@ public class AmenitiesService {
         }
     }
 
+    private Integer findTotalPriceFromAmenitiesIds(List<Integer> amenitiesIds) {
+        int totalPrice = 0;
+        for (Integer amenitiesId : amenitiesIds) {
+            Amenities amenities = amenitiesRepository.findById(amenitiesId.longValue()).get();
+            totalPrice += amenities.getPrice() + findMaterialsPriceByAmenities(amenities);
+
+        }
+        return totalPrice;
+    }
+
+    private Integer findMaterialsPriceByAmenities(Amenities amenities) {
+        Integer totalPrice = 0;
+        Integer[] materialsIds = amenities.getMaterials();
+        for (Integer materialsId : materialsIds) {
+            Integer price;
+            try {
+                price = materialRepository.findById(materialsId.longValue()).get().getPrice();
+            } catch (Exception e) {
+                log.warn("error in material find by id");
+                return 0;
+            }
+            totalPrice += price;
+        }
+        return totalPrice;
+    }
+
+    private Long randomByAllEmployees() {
+        try {
+            List<Long> employeesIdList = new ArrayList<>(employeeRepository.findAll().stream().map(Employee::getId).toList());
+            Collections.shuffle(employeesIdList);
+            return employeesIdList.getFirst();
+        } catch (Exception e) {
+            return 0L;
+        }
+    }
+
     private Client converterClientDtoToModel(ClientRequestDto dto) {
         Client client;
         try {
-            client = clientRepository.findByEmail().get();
+            client = clientRepository.findByEmail(dto.getEmail()).get();
+
         } catch (Exception e) {
+            long count = clientRepository.count()+1;
             client = new Client();
+            client.setId(count);
             client.setName(dto.getName());
             client.setSecondName(dto.getSecond_name());
             client.setEmail(dto.getEmail());
@@ -432,7 +468,7 @@ public class AmenitiesService {
     private List<Integer> converterAmenitiesNamesToIds(String[] amenitiesNames) {
         List<Integer> result = new ArrayList<>();
         for (String amenitiesName : amenitiesNames) {
-            result.add(amenitiesRepository.findByTitle(amenitiesName).getId();
+            result.add(amenitiesRepository.findByTitle(amenitiesName).getId().intValue());
 
         }
         return result;

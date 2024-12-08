@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 public class Provider {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
     @Column(name = "contact_info")
