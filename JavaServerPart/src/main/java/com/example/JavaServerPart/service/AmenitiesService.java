@@ -45,6 +45,7 @@ public class AmenitiesService {
     private final ProductRepository productRepository;
     private final ProviderRepository providerRepository;
     private final ProviderOrderRepository providerOrderRepository;
+    private final SalaryService salaryService;
 
     public ListAllOrderResponseDto getNoPayOrder() {
 
@@ -277,30 +278,12 @@ public class AmenitiesService {
     }
 
     public AllEmployeeSalaryReportResponseDto getReportByEmployeeSalary() {
-        return new AllEmployeeSalaryReportResponseDto(
-                List.of(
-                        new ChildrenEmployeeSalaryReportResponseDto(
-                                23L,
-                                "ivan ivanov",
-                                "junior",
-                                40_000,
-                                12,
-                                17,
-                                50_000,
-                                47_987
-                        ),
-                        new ChildrenEmployeeSalaryReportResponseDto(
-                                23564L,
-                                "moskovchuck filip",
-                                "intern",
-                                5_000,
-                                3,
-                                17,
-                                5_500,
-                                4_787
-                        )
-                )
-        );
+        List<ChildrenEmployeeSalaryReportResponseDto> children = new ArrayList<>();
+        List<Employee> employeeList = employeeRepository.findAll();
+        for (Employee employee : employeeList) {
+            children.add(salaryService.createSalaryReportByEmployee(employee));
+        }
+        return new AllEmployeeSalaryReportResponseDto(children);
     }
 
 
