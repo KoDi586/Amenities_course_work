@@ -169,28 +169,53 @@ public class AmenitiesService {
     }
 
     public AllAmenitiesResponseDto getAllAmenities() {
-        return new AllAmenitiesResponseDto(
-                List.of(
-                        new ChildrenAmenitiesResponseDto(
-                                2L,
-                                "name1",
-                                "description",
-                                "without_product",
-                                new String[]{"mat1", "mat2"},
-                                new String[]{"product2", "product4"},
-                                3_000
-                        ),
-                        new ChildrenAmenitiesResponseDto(
-                                2L,
-                                "name2",
-                                "description",
-                                "without_product",
-                                new String[]{"mat1", "mat2"},
-                                new String[]{"product2", "product4"},
-                                3_000
-                        )
-                )
+        List<Amenities> amenitiesList = amenitiesRepository.findAll();
+        List<ChildrenAmenitiesResponseDto> children = new ArrayList<>();
+        for (Amenities amenities : amenitiesList) {
+            children.add(converterAmenitiesModelToDto(amenities));
+        }
+        return new AllAmenitiesResponseDto(children);
+    }
+
+    private ChildrenAmenitiesResponseDto converterAmenitiesModelToDto(Amenities amenities) {
+        String amenitiesType = "without";
+        if (amenities.getType()) {
+            amenitiesType = "with";
+        }
+        List<String> materialsNames = findMaterialsNamesByIdList(amenities.getMaterials());
+        List<String> productNames = findProductsNamesByIdList(amenities.getProducts());
+
+        return new ChildrenAmenitiesResponseDto(
+                amenities.getId(),
+                amenities.getTitle(),
+                amenities.getDescription(),
+                amenitiesType,
+                materialsNames,
+                productNames,
+                amenities.getPrice()
+
         );
+    }
+
+    private List<String> findProductsNamesByIdList(Integer[] products) {
+        if (products == null) {
+            return null;
+        }
+        List<String> names = new ArrayList<>();
+        for (Integer productId : products) {
+            Product product = null;
+            try {
+                product = productRepository.findById(productId.longValue()).get();
+            } catch (Exception e) {
+                log.warn("error in material find by id");
+            }
+            try {
+                names.add(product.getTitle());
+            } catch (Exception e) {
+                log.warn("error in material get tittle");
+            }
+        }
+        return names;
     }
 
     public AllMaterialsResponseDto getAllWithoutParams() {

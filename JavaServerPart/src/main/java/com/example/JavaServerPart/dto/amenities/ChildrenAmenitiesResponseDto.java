@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,8 +15,8 @@ public class ChildrenAmenitiesResponseDto {
     private String name;
     private String description;
     private String type;
-    private String[] materials_names;
-    private String[] products_names;
+    private List<String> materials_names;
+    private List<String> products_names;
     private Integer price;
 
 }

@@ -18,7 +18,7 @@ public class Amenities {
     private String title;
     private String description;
     @Column(name = "\"type\"")
-    private boolean type;
+    private Boolean type;
     private Integer[] materials;
     private Integer[] products;
     private Integer price;
