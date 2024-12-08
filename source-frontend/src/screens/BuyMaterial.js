@@ -58,6 +58,7 @@ const BuyMaterial = () => {
             });
             
             if (response.status === 200) {
+                window.location.reload();
                 // Обработка успешного ответа
             } else {
                 // Обработка ошибки

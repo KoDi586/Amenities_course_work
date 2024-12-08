@@ -22,6 +22,8 @@ const OrderFinish = () => {
         try {
              const response = await axios.put("http://"+ ip +":8089/api/order/finish" + "?order_id="+orderId);
              console.log('Payment successful:', response.data);
+
+             window.location.reload();
          } catch (error) {
              console.error('Payment failed:', error);
          }

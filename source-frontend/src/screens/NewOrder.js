@@ -85,7 +85,7 @@ const NewOrder = () => {
             const response = await axios.post("http://"+ ip +":8089/api/order", payload);
             setResponseMessage(`Успех! Ответ: ${response.data.message}`);
 
-            // window.location.reload();
+            window.location.reload();
         } catch (error) {
             if (error.response) {
                 setResponseMessage(`Ошибка: ${error.response.data.message}`);
