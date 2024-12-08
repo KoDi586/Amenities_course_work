@@ -52,7 +52,7 @@ const MainPage = () => {
                     <CardBody>
                         <CardText>Все поставщики.</CardText>
                     </CardBody>
-                    <Button as={Link} to="/providers">ОПерейти</Button>
+                    <Button as={Link} to="/providers">Перейти</Button>
                 </Card>
                 <Card style={{marginTop: '10px'}}>
                     <CardHeader>
