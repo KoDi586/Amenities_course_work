@@ -18,6 +18,6 @@ public class MaterialTurnover {
     @Column(name = "material_id")
     private Long materialId;
     private Integer count;
-    @Column(name = "type", nullable = false)
+    @Column(name = "type")
     private String type;
 }

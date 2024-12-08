@@ -8,6 +8,7 @@ import com.example.JavaServerPart.dto.employee.salary.AllEmployeeSalaryReportRes
 import com.example.JavaServerPart.dto.employee.salary.ChildrenEmployeeSalaryReportResponseDto;
 import com.example.JavaServerPart.dto.materials.get.AllMaterialsResponseDto;
 import com.example.JavaServerPart.dto.materials.get.ChildrenMaterialResponseDto;
+import com.example.JavaServerPart.dto.materials.put.BoughtMaterialsRequestDto;
 import com.example.JavaServerPart.dto.materials.put.CreateBoughtMaterialsRequestDto;
 import com.example.JavaServerPart.dto.order.get.ChildrenOrderResponseDto;
 import com.example.JavaServerPart.dto.order.get.ClientResponseDto;
@@ -304,7 +305,45 @@ public class AmenitiesService {
 
 
     public void createBoughtMaterialsFromRandomProvider(CreateBoughtMaterialsRequestDto dto) {
+        createMaterialTurnoverForMaterialBought(dto.getBought_materials());
+        // создать отчет о закупке
+        materialAddCountByBought(dto.getBought_materials());
+        // добавить количество закупленных на склад
+    }
 
+    private void createMaterialTurnoverForMaterialBought(List<BoughtMaterialsRequestDto> boughtMaterials) {
+        for (BoughtMaterialsRequestDto boughtMaterial : boughtMaterials) {
+            MaterialTurnover materialTurnover = new MaterialTurnover(
+                    materialTurnoverRepository.count()+1,
+                    boughtMaterial.getMaterial_id(),
+                    boughtMaterial.getCount_of_bought(),
+                    "закупка материалов"
+            );
+            materialTurnoverRepository.save(materialTurnover);
+        }
+    }
+
+    private void materialAddCountByBought(List<BoughtMaterialsRequestDto> boughtMaterials) {
+        for (BoughtMaterialsRequestDto boughtMaterial : boughtMaterials) {
+            Material material = null;
+            try {
+                material = materialRepository.findById(boughtMaterial.getMaterial_id()).get();
+            } catch (Exception e) {
+                log.warn("error in material find by id");
+            }
+            if (material != null) {
+                material.setCountOfWarehouse(
+                        material.getCountOfWarehouse()
+                                +
+                                boughtMaterial.getCount_of_bought());
+                try {
+                    materialRepository.save(material);
+                } catch (Exception e) {
+                    log.warn("error in material save");
+                }
+            }
+
+        }
     }
 
     public void orderPayingSetDate(Long orderId) {
@@ -399,7 +438,7 @@ public class AmenitiesService {
         try {
             client = clientRepository.save(client);
             order.setClientId(client.getId());
-            order.setId(orderRepository.count()+1);
+            order.setId(orderRepository.count() + 1);
             order.setStatus("не оплачен");
             order.setEmployeeId(randomByAllEmployees());  //рандомно выбрать из 10 сотрудников
             order.setTotalPrice(findTotalPriceFromAmenitiesIds(amenitiesIds)); //по услугам и их материалам
@@ -452,7 +491,7 @@ public class AmenitiesService {
             client = clientRepository.findByEmail(dto.getEmail()).get();
 
         } catch (Exception e) {
-            long count = clientRepository.count()+1;
+            long count = clientRepository.count() + 1;
             client = new Client();
             client.setId(count);
             client.setName(dto.getName());
