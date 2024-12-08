@@ -40,7 +40,7 @@ const BuyMaterial = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         
-        const boughtMaterials = formData.boughtMaterials.map(item => ({
+        const boughtMaterials = formData.bought_materials.map(item => ({
             material_id: item.material_id,
             count_of_bought: item.count_of_bought
         }));
@@ -149,7 +149,7 @@ const BuyMaterial = () => {
                 </Card>
                 
                 <Card style={{padding:'25px'}}>
-                        <h1 style={{textAlign: 'center'}}>выплатасе материалы</h1>
+                        <h1 style={{textAlign: 'center'}}>Материалы</h1>
                         <Table style={{marginTop: '25px'}}>
                             <thead>
                                 <tr style={{textAlign: 'center'}}>
@@ -164,8 +164,8 @@ const BuyMaterial = () => {
                                     <tr>
                                         <td>{material.material_id}</td>
                                         <td>{material.name}</td>
-                                        <td>{material.warehouse_id}</td>
-                                        <td>{material.count_in_warehouse}</td>
+                                        <td>№{material.warehouse_id}</td>
+                                        <td>{material.count_in_warehouse} шт.</td>
                                     </tr>
                                 ))}
                             </tbody>

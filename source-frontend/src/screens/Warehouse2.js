@@ -38,8 +38,8 @@ const Warehouse2 = () => {
                                     <tr>
                                         <td>{material.material_id}</td>
                                         <td>{material.name}</td>
-                                        <td>{material.warehouse_id}</td>
-                                        <td>{material.count_in_warehouse}</td>
+                                        <td>№{material.warehouse_id}</td>
+                                        <td>{material.count_in_warehouse} шт.</td>
                                     </tr>
                                 ))}
                             </tbody>

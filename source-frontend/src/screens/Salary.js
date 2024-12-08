@@ -9,7 +9,7 @@ const Salary = () => {
 
     useEffect(
         () => {
-            axios.get("http://"+ ip +":8089 api/employee/report-by-salary").then(response => {
+            axios.get("http://"+ ip +":8089/api/employee/report-by-salary").then(response => {
                 setSalary(response.data.children)
             }).catch(error => {
                 console.log(error);
@@ -42,11 +42,11 @@ const Salary = () => {
                                         <td>{salarys.employee_id}</td>
                                         <td>{salarys.total_name}</td>
                                         <td>{salarys.position}</td>
-                                        <td>{salarys.salary}</td>
-                                        <td>{salarys.count_finish_work}</td>
-                                        <td>{salarys.total_salary}</td>
-                                        <td>{salarys.last_finish_salary}</td>
-                                        <td>{salarys.ndfl_percent}</td>
+                                        <td>{salarys.salary} р.</td>
+                                        <td>{salarys.count_finish_work} шт.</td>
+                                        <td>{salarys.total_salary} р.</td>
+                                        <td>{salarys.last_finish_salary} р.</td>
+                                        <td>{salarys.ndfl_percent} %</td>
                                     </tr>
                                 ))}
                         </tbody>

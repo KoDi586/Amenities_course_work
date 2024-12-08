@@ -40,7 +40,7 @@ const MoveMoney = () => {
                                         <td>{key}</td>
                                         <td>{money.thing}</td>
                                         <td>{money.person}</td>
-                                        <td>{money.price}</td>
+                                        <td>{money.price} р.</td>
                                         <td>{money.type}</td>
                                     </tr>
                                 ))}

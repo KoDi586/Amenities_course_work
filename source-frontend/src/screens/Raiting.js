@@ -41,7 +41,7 @@ const Raiting = () => {
                                         <td>{rat.total_name}</td>
                                         <td>{rat.contact_info}</td>
                                         <td>{rat.position}</td>
-                                        <td>{rat.salary}</td>
+                                        <td>{rat.salary} р.</td>
                                     </tr>
                                 ))}
                             </tbody>

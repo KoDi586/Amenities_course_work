@@ -178,7 +178,7 @@ const NewOrder = () => {
                                         ))}
                                     </td>
                                     <td>{orders.employee_total_name}</td>
-                                    <td>{orders.total_price}</td>
+                                    <td>{orders.total_price} р.</td>
                                 </tr>
                             ))}
                         </tbody>

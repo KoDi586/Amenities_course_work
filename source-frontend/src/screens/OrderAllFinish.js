@@ -52,7 +52,7 @@ const OrderAllFinish = () => {
                                             ))}
                                         </td>
                                         <td>{orders.employee_total_name}</td>
-                                        <td>{orders.total_price}</td>
+                                        <td>{orders.total_price} р.</td>
                                         <td>{orders.status}</td>
                                         <td>{orders.date_of_payed}</td>
                                         <td>{orders.date_of_finished}</td>
