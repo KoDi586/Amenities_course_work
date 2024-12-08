@@ -224,22 +224,20 @@ public class AmenitiesService {
     }
 
     public AllProviderResponseDto getAllProvider() {
+        List<ChildrenProviderResponseDto> children = new ArrayList<>();
+        List<Provider> providerList = providerRepository.findAll();
+        for (Provider provider : providerList) {
+            children.add(converterProviderModelToDto(provider));
+        }
+        return new AllProviderResponseDto(children);
+    }
 
-        return new AllProviderResponseDto(
-                List.of(
-                        new ChildrenProviderResponseDto(
-                                2L,
-                                "name1",
-                                "contact"
-                        ),
-                        new ChildrenProviderResponseDto(
-                                2L,
-                                "name2",
-                                "contact________+7"
-                        )
-                )
+    private ChildrenProviderResponseDto converterProviderModelToDto(Provider provider) {
+        return new ChildrenProviderResponseDto(
+                provider.getId(),
+                provider.getName(),
+                provider.getContactInfo()
         );
-
     }
 
     public AllOrderMasterAndMaterialsResponseDto getAllOrderMasterAndMaterialsResponseDto() {
