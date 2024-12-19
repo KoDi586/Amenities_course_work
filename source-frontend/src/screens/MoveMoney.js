@@ -37,7 +37,7 @@ const MoveMoney = () => {
                         <tbody style={{textAlign: 'center'}}>
                                 {movemoney.map((money, key) => (
                                     <tr>
-                                        <td>{key}</td>
+                                        <td>{key + 1}</td>
                                         <td>{money.thing}</td>
                                         <td>{money.person}</td>
                                         <td>{money.price} р.</td>
