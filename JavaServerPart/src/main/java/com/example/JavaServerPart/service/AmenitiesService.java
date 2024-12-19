@@ -192,7 +192,7 @@ public class AmenitiesService {
                 amenitiesType,
                 materialsNames,
                 productNames,
-                amenities.getPrice()
+                amenities.getPrice() + findMaterialsPriceByAmenities(amenities)
 
         );
     }
@@ -275,7 +275,14 @@ public class AmenitiesService {
     }
 
     private ChildrenOrderMasterAndMaterialsResponseDto createReportByOrderMasters(Order order) {
-        String employeeName = employeeRepository.findById(order.getEmployeeId()).get().getTotalName();
+        String employeeName;
+        try {
+            Employee employee = employeeRepository.findById(order.getEmployeeId()).get();
+            employeeName = employee.getTotalName();
+        } catch (Exception e) {
+            log.warn("employee find by id error");
+            employeeName = null;
+        }
         List<String> materialsNamesList = findMaterialsNamesByAmenitiesIds(order.getAmenitiesIds());
         return new ChildrenOrderMasterAndMaterialsResponseDto(
                 order.getId(),

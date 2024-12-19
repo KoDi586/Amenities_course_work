@@ -1,15 +1,4 @@
-INSERT INTO public.employee (id, total_name, contact_info, salary, position, count_finish)
-VALUES
-    (1, 'Ivan Ivanov', '+7 (999)-99-99', 50000, 'junior', 2),
-    (2, 'Petr Petrov', '+7 (999)-99-99', 70000, 'middle', 6),
-    (3, 'Anna Sidorova', '+7 (999)-99-99', 90000, 'senior', 27),
-    (4, 'Olga Smirnova', '+7 (999)-99-99', 55000, 'junior', 5),
-    (5, 'Sergey Sergeev', '+7 (999)-99-99', 75000, 'middle', 8),
-    (6, 'Maria Ivanova', '+7 (999)-99-99', 95000, 'senior', 29),
-    (7, 'Nikolay Fedorov', '+7 (999)-99-99', 52000, 'junior', 9),
-    (8, 'Elena Nikolaeva', '+7 (999)-99-99', 72000, 'middle', 11),
-    (9, 'Alexey Alekseev', '+7 (999)-99-99', 98000, 'senior', 66)
-ON CONFLICT (id) DO NOTHING;
+ 
 
 INSERT INTO public.material (id, title, price, warehouse_id, count_in_warehouse)
 VALUES
