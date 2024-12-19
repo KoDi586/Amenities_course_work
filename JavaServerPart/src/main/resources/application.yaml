@@ -1,0 +1,22 @@
+server:
+  port: 8089
+
+spring:
+  sql:
+    init:
+      data-locations: classpath:sql/data.sql
+      schema-locations: classpath:sql/schema.sql
+      mode: always
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/amenities_db
+    username: postgres
+    password: 1234
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+
+trust:
+  port: 3000
